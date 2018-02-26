@@ -2,10 +2,6 @@ import discord
 import asyncio
 import random
 
-# change all template occurrences
-# change helpstr
-# adapt start and stop commands and number of needed commands
-
 class Randomgen:
     def __init__(self, client):
         print('random created')

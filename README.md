@@ -1,11 +1,15 @@
 # UltraBot - yet another discord bot
 
+A simple, extensible and lightweight discord bot written in Python. Control the bot using `!<command>` or `!help <command>` from any server's channel the bot is connected to or sending a private message.
+
+
 ## Overwiew
 
 Supports the following functionalities:
 * `ultrabot.py`: basic bot, connects to server and handles agrument parsing
 * `helpfunc.py`: handles `!help` command for each other functionality
 * `randomgen.py`: generate pseudo-random numbers in the form of pen&paper die throws
+* `testfunc.py`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers. To remove this from a running bot, delete the occurrences in lines 7, 13 and 16 in `ultrabot.py` 
 
 
 ## TODO
@@ -17,7 +21,6 @@ Supports the following functionalities:
 
 ## Notes
 
-* **Important**: The swag function is not included in this repository. In order to get the bot running, remove the entries in line 7, 13 and 16 in ultrabot.py
 * `template.py` contains the base code for creating new functionalities. Adapt line 8, 12, 35 and the execute function for the individual purpose
 * In order to deploy the bot, you will need to register it using your discord account. More infos: https://discordapp.com/developers/docs/topics/oauth2
 
