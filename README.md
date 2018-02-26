@@ -24,7 +24,7 @@ At the moment the following functionalities are avaibalbe:
 
 ## Notes
 
-* `template.py` contains the base code for creating new functionalities. Adapt line 8, 12, 35 and the execute function for the individual purpose
+* `template.py` contains the base code for creating new functionalities. Adapt line 8, 12, 35, the execute function and the file name for the individual purpose
 * In order to deploy the bot, you will need to register it using your discord account. More infos: https://discordapp.com/developers/docs/topics/oauth2
 
 
