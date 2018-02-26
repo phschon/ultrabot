@@ -13,7 +13,7 @@ class Randomgen:
 
     async def execute(self, command, message):
         if not len(command) == 2:
-            await self.client.send_message(message.channel, 'Wrong number of arguments.{}'.format(self.helpstr))
+            await self.client.send_message(message.channel, 'Wrong number of arguments. {}'.format(self.helpstr))
             return
         elif command[1] == 'help':
             await self.help(message)
