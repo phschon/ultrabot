@@ -16,6 +16,6 @@ Supports the following functionalities:
 
 ## Notes
 
-* the swag function is not included in this repository, in order to get the bot running, remove the entries in line 7, 13 and 16 in ultrabot.py
-* template.py contains the base code for creating new functionalities, adapt line 8, 12, 35 and the execute function for the individual purpose
-* in order to deploy the bot, you will to register it using your discord account, more infos: https://discordapp.com/developers/docs/topics/oauth2
+* The swag function is not included in this repository. In order to get the bot running, remove the entries in line 7, 13 and 16 in ultrabot.py
+* template.py contains the base code for creating new functionalities. Adapt line 8, 12, 35 and the execute function for the individual purpose
+* In order to deploy the bot, you will need to register it using your discord account. More infos: https://discordapp.com/developers/docs/topics/oauth2
