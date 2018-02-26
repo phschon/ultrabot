@@ -1,3 +1,6 @@
 token
 archive*
 swag*
+__pycache__/
+env/
+install/
