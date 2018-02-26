@@ -1,7 +1,7 @@
 import discord
 import asyncio
 
-class Helpfunc:
+class Help:
 
     def __init__(self, client, dic):
         self.client = client

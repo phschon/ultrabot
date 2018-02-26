@@ -2,7 +2,7 @@ import discord
 import asyncio
 import random
 
-class Randomgen:
+class Random:
     def __init__(self, client):
         print('random created')
         self.client = client

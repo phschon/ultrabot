@@ -1,26 +1,39 @@
 import discord
 import asyncio
-import testfunc
-import helpfunc
-import randomgen
-import play_music
 import os
+import re
+import sys
+import importlib
 
 with open('token', 'r') as f:
     token = f.readline()[:-1]
 
 client = discord.Client()
 # dict with all available functions and objects of all supported functionality
-tasks = {'test' : testfunc.Testfunc(client), 'random' : randomgen.Randomgen(client), 'music' : play_music.Music(client)}
-tasks['help'] = helpfunc.Helpfunc(client, tasks)
+# tasks = {'test' : testfunc.Testfunc(client), 'random' : randomgen.Randomgen(client), 'music' : play_music.Music(client)}
+tasks = {}
 
-tip = 'Available commands: `!music`,  `!test`, `!random`, `!help`'
+tip = 'Available commands:'
 
-# imports and configs if additional files/functionalities are found in folder
-if "swag.py" in os.listdir("."):
-    import swag
-    tasks['swag'] = swag.Swag(client)
-    tip = tip + ', `!swag`'
+# load all modules from the modules subfolder
+pysearchre = re.compile('^ub-.*py$', re.IGNORECASE)
+pluginfiles = filter(pysearchre.search,os.listdir(os.path.join(os.path.dirname(__file__),'modules')))
+form_module = lambda fp: '.' + os.path.splitext(fp)[0]
+plugins = map(form_module, pluginfiles)
+importlib.import_module('modules')
+for plugin in plugins:
+    if not plugin.startswith('__'):
+        p = importlib.import_module(plugin, package="modules")
+        main_class = getattr(p, plugin[4:].title())
+        if plugin[4:] == 'help':
+            tasks[plugin[4:]] = main_class(client, tasks)
+        else:
+            tasks[plugin[4:]] = main_class(client)
+        tip = tip + ' `!' + plugin[4:] + '`'
+
+
+# strip the trailing ','
+tip = tip[:-1]
 
 # add the rest of the help string
 tip = tip + '''

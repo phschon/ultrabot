@@ -1,6 +1,6 @@
 import discord
 import asyncio
-import testfuncrunner
+import modules.testfuncrunner
 
 class Testfunc:
     helpstr = '''Supported commands:
@@ -27,7 +27,7 @@ class Testfunc:
         if message.channel.id in self.dic:
             self.runner = self.dic[message.channel.id]
         else:
-            self.runner = testfuncrunner.Testfuncrunner(self.client)
+            self.runner = modules.testfuncrunner.Testfuncrunner(self.client)
             self.dic[message.channel.id] = self.runner
             
         if command[1] == 'start':
