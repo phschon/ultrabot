@@ -1,18 +1,17 @@
 import discord
 import asyncio
 import random
-import modules.template
+import metamodule
 
-class Random(Template):
+class Random(metamodule.Meta):
     def __init__(self, client):
-        print('random created')
         self.client = client
         self.command = 'random'
         self.helpstr = '''Supported commands:
         - `<number>d<die>`: Roll <die> <number> of times
         - `<number>w<die>`: Roll <die> <number> of times'''
 
-    def command(self):
+    def get_command(self):
         return self.command
 
     async def execute(self, command, message):

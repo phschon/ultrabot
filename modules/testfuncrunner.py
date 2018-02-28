@@ -4,7 +4,6 @@ import asyncio
 class Testfuncrunner:
 
     def __init__(self, client):
-        print('Testrunner created')
         self.client = client
         self.running = False
 

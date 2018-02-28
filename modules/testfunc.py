@@ -1,19 +1,23 @@
 import discord
 import asyncio
 import modules.testfuncrunner
+import metamodule
 
-class Testfunc:
-    helpstr = '''Supported commands:
+class Testfunc(metamodule.Meta):
+
+    def __init__(self, client):
+        self.client = client
+        self.running = False
+        self.dic = {}
+        self.helpstr = '''Supported commands:
 
     - `start`: starts the test task
     - `stop`: stops the test task
     - `status`: shows the status of the test task'''
+        self.command = 'test'
 
-    def __init__(self, client):
-        print('Test created')
-        self.client = client
-        self.running = False
-        self.dic = {}
+    def get_command(self):
+        return self.command
 
 
     async def execute(self, command, message):
