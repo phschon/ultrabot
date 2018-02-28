@@ -16,7 +16,7 @@ tasks = {}
 
 tip = 'Available commands:'
 
-# load all modules from the modules subfolder
+# load all valid modules from the modules subfolder
 pysearchre = re.compile('.py$', re.IGNORECASE)
 modfiles = filter(pysearchre.search,os.listdir(os.path.join(os.path.dirname(__file__),'modules')))
 form_module = lambda fp: '.' + os.path.splitext(fp)[0]
@@ -31,7 +31,7 @@ for mod in mods:
             name = instance.get_command()
             print(name + " created")
             tasks[name] = instance
-            tip = tip + ' `!' + mod[1:] + '`,'
+            tip = tip + ' `!' + name[1:] + '`,'
 
 
 # strip the trailing ','
@@ -71,12 +71,14 @@ async def on_message(message):
         return
 
     if command[0] == 'help' and not len(command) == 2:
-        await client.send_message(message.channel, 'Command not supported. {}'.format(tip))
+        await client.send_message(message.channel, 'Please specify one command. {}'.format(tip))
         return
 
     if command[0] == 'help':
-        if command[0] in tasks:
-            await self.client.send_message(message.channel, tasks[command[1]].help())
+        print(command)
+        print(tasks)
+        if command[1] in tasks:
+            await tasks[command[1]].help(message)
             return
         else:
             await client.send_message(message.channel, 'Command not supported. {}'.format(tip))

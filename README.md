@@ -18,12 +18,14 @@ At the moment the following functionalities are avaibalbe:
 * moderation functionality for image posts
 * support arbitrary module names (not only digits and letters)
 
+Feel free to open issues for suggestions or contribute your own module :)
+
 
 ## Notes
 
 * `metamodule.py` is the base class which all modules must inherit. It specifies methods that are needed by the bot and must be implemented.
 * `template.py` shows sample code for creating new functionalities. Adapt line 10, 14, 16-19, 44, the execute function and the file name for the individual purpose
-* In order to deploy the bot, you will need to register it using your discord account. More infos: https://discordapp.com/developers/docs/topics/oauth2
+* In order to deploy the bot, you will need to register it using your discord account. More infos: https://discordapp.com/developers/docs/topics/oauth2. The token needed for the bot is stored in a file named `token` in its the root directory.
 
 
 ## Dependencies
