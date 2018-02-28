@@ -1,14 +1,14 @@
 import discord
 import asyncio
-import abc
+from abc import ABCMeta, abstractmethod
 
 # This is the template for generating new modules
 # In order to work properly each module must inherit this class
 # and implement the shown functions.
 # This file shows example content for both functions and variables
 
-class Template:
-    @abc.abstractmethod
+class Template(metaclass=ABCMeta):
+    @abstractmethod
     def __init__(self, client):
         print('template created')
         self.client = client
@@ -20,12 +20,12 @@ class Template:
         - `command 1`: does something
         - `command 2`: does something else'''
 
-    @abc.abstractmethod
+    @abstractmethod
     def command(self):
         return self.command
 
 
-    @abc.abstractmethod
+    @abstractmethod
     async def execute(self, command, message):
         if not len(command) == 1:
             await self.client.send_message(message.channel, 'Wrong number of arguments. {}'.format(self.helpstr))
@@ -42,6 +42,6 @@ class Template:
             await self.client.send_message(message.channel, 'Wrong usage of template.\n{}'.format(self.helpstr))
 
 
-    @abc.abstractmethod
+    @abstractmethod
     async def help(self, message):
         await self.client.send_message(message.channel, '`template` - Default template.\n\n{}'.format(self.helpstr))

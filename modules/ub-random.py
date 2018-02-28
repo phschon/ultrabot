@@ -1,15 +1,19 @@
 import discord
 import asyncio
 import random
+import modules.template
 
-class Random:
+class Random(Template):
     def __init__(self, client):
         print('random created')
         self.client = client
+        self.command = 'random'
         self.helpstr = '''Supported commands:
         - `<number>d<die>`: Roll <die> <number> of times
         - `<number>w<die>`: Roll <die> <number> of times'''
 
+    def command(self):
+        return self.command
 
     async def execute(self, command, message):
         if not len(command) == 1:

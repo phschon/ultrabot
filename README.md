@@ -10,7 +10,7 @@ The `modules` folder contains all available modules for the bot. Each module mus
 At the moment the following functionalities are avaibalbe:
 * `help`: handles `!help` command for each other functionality
 * `random`: generate pseudo-random numbers in the form of pen&paper die throws
-* `testfunc`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers. To remove this from a running bot, delete the occurrences in lines 7, 13 and 16 in `ultrabot.py` 
+* `testfunc`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers. To remove this from a running bot, delete the occurrences in lines 7, 13 and 16 in `ultrabot.py`
 
 
 ## TODO
@@ -24,12 +24,19 @@ At the moment the following functionalities are avaibalbe:
 
 ## Notes
 
-* `template.py` contains the base code for creating new functionalities. Adapt line 8, 12, 35 and the execute function for the individual purpose
+* `template.py` contains the base code for creating new functionalities. Adapt line 8, 12, 35, the execute function and the file name for the individual purpose
 * In order to deploy the bot, you will need to register it using your discord account. More infos: https://discordapp.com/developers/docs/topics/oauth2
 
 
 ## Dependencies
 
+* **Python3.4+**
 * [discord.py](https://github.com/Rapptz/discord.py) library
-* Python3.4+
 * `asyncio` library
+
+
+You can install the dependencies with pip doing
+
+```
+pip install -r requirements.txt
+```
