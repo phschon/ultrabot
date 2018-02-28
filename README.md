@@ -10,7 +10,7 @@ The `modules` folder contains all available modules for the bot. Each module mus
 At the moment the following functionalities are avaibalbe:
 * `help`: handles `!help` command for each other functionality
 * `random`: generate pseudo-random numbers in the form of pen&paper die throws
-* `testfunc`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers. To remove this from a running bot, delete the occurrences in lines 7, 13 and 16 in `ultrabot.py` 
+* `testfunc`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers. To remove this from a running bot, delete the occurrences in lines 7, 13 and 16 in `ultrabot.py`
 
 
 ## TODO
@@ -30,6 +30,13 @@ At the moment the following functionalities are avaibalbe:
 
 ## Dependencies
 
+* **Python3.4+**
 * [discord.py](https://github.com/Rapptz/discord.py) library
-* Python3.4+
 * `asyncio` library
+
+
+You can install the dependencies with pip doing
+
+```
+pip install -r requirements.txt
+```
