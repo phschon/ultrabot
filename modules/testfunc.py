@@ -22,7 +22,7 @@ class Testfunc(metamodule.Meta):
 
     async def execute(self, command, message):
         if not len(command) == 1:
-            await self.client.send_message(message.channel, 'Wrong number of arguments. {}'.format(Testfunc.helpstr))
+            await self.client.send_message(message.channel, 'Wrong number of arguments. {}'.format(self.helpstr))
             return
         elif command[0] == 'help':
             await self.help(message)
@@ -52,8 +52,8 @@ class Testfunc(metamodule.Meta):
             else:
                 await self.client.send_message(message.channel, 'Task not running.')
         else:
-            await self.client.send_message(message.channel, 'Wrong usage of test task. {}'.format(Testfunc.helpstr))
+            await self.client.send_message(message.channel, 'Wrong usage of test task. {}'.format(self.helpstr))
 
 
     async def help(self, message):
-        await self.client.send_message(message.channel, '`test task` - Default bot testing and debugging.\n\n{}'.format(Testfunc.helpstr))
+        await self.client.send_message(message.channel, '`test task` - Default bot testing and debugging.\n\n{}'.format(self.helpstr))
