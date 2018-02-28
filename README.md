@@ -8,6 +8,7 @@ A simple, extensible and lightweight discord bot written in Python. Control the 
 The `modules` folder contains all available modules for the bot. Each module must contain a class with the exact name as the file name (except the first letter in a class' name, which is still uppercase) and inherit the `metamodule.py`. The file name must only contain digits and characters (see TODO).
 
 At the moment the following functionalities are avaibalbe:
+* `music`: a music player supporting queueing multiple songs from different users
 * `random`: generate pseudo-random numbers in the form of pen&paper die throws
 * `test`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers. To remove this from a running bot, delete the occurrences in lines 7, 13 and 16 in `ultrabot.py`
 
