@@ -180,14 +180,14 @@ class Swag:
 
 
     async def execute(self, command, message):
-        if not len(command) == 2:
+        if not len(command) == 1:
             await self.client.send_message(message.channel, 'Wrong number of arguments. {}'.format(self.helpstr))
             return
-        elif command[1] == 'help':
+        elif command[0] == 'help':
             await self.help(message)
             return
 
-        await self.client.send_message(message.channel, await self.transform(command[1]))
+        await self.client.send_message(message.channel, await self.transform(command[0]))
 
 
 

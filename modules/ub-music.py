@@ -196,50 +196,50 @@ class Music:
 
     async def execute(self, command, message):
         # handle wrong number of arguments
-        if not len(command) > 1:
+        if not len(command) > 0:
             await self.client.send_message(message.channel, 'Wrong number of arguments. {}'.format(self.helpstr))
             return
         # display help string
-        elif command[1] == 'help':
+        elif command[0] == 'help':
             await self.help(message)
             return
 
         # summon bot to current voice channel (current = voice channel of message's author)
-        if command[1] == 'join' and len(command) == 2:
+        if command[0] == 'join' and len(command) == 1:
             v_chan = message.author.voice_channel
             await self.summon_channel(v_chan, message.channel)
         # summon bot to specific voice channel
-        elif command[1] == 'join' and len(command) == 3:
-            v_chan = command[2]
+        elif command[0] == 'join' and len(command) == 2:
+            v_chan = command[1]
             await self.join_channel(v_chan, message.channel)
-        elif command[1] == 'add' and len(command) == 3:
-            await self.add(message, command[2])
-        elif command[1] == 'resume':
+        elif command[0] == 'add' and len(command) == 2:
+            await self.add(message, command[1])
+        elif command[0] == 'resume':
             await self.resume(message)
-        elif command[1] == 'pause':
+        elif command[0] == 'pause':
             await self.pause(message)
-        elif command[1] == 'stop':
+        elif command[0] == 'stop':
             await self.stop(message)
-        elif command[1] == 'list':
+        elif command[0] == 'list':
             await self.list(message.channel)
-        elif command[1] == 'play':
+        elif command[0] == 'play':
             # await self.play()
             pass
-        elif command[1] == 'skip':
+        elif command[0] == 'skip':
             # await self.skip(self)
             pass
-        elif command[1] == 'disconnect':
+        elif command[0] == 'disconnect':
             if not self.voice == None:
                 await self.voice.disconnect()
                 self.voice = None
             else:
                 await self.client.send_message(message.channel, 'No connected to any voice channel.')
-        elif command[1] == 'shut' and command[2] == 'up':
+        elif command[0] == 'shut' and command[1] == 'up':
             if not self.voice == None:
                 await self.voice.disconnect()
                 self.voice = None
-        elif command[1] == 'volume' and len(command) == 3:
-            await self.volume(message, command[2])
+        elif command[0] == 'volume' and len(command) == 2:
+            await self.volume(message, command[1])
         else:
             await self.client.send_message(message.channel, 'Wrong usage of music player. {}'.format(self.helpstr))
 

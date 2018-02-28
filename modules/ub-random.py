@@ -12,10 +12,10 @@ class Random:
 
 
     async def execute(self, command, message):
-        if not len(command) == 2:
+        if not len(command) == 1:
             await self.client.send_message(message.channel, 'Wrong number of arguments. {}'.format(self.helpstr))
             return
-        elif command[1] == 'help':
+        elif command[0] == 'help':
             await self.help(message)
             return
 
@@ -23,10 +23,10 @@ class Random:
         random.seed()
         res = 0
         out = ""
-        if "d" in command[1]:
-            num, die = command[1].split("d")
-        elif "w" in command[1]:
-            num, die = command[1].split("w")
+        if "d" in command[0]:
+            num, die = command[0].split("d")
+        elif "w" in command[0]:
+            num, die = command[0].split("w")
         else:
             await self.client.send_message(message.channel, 'Wrong usage of random. {}'.format(self.helpstr))
             return

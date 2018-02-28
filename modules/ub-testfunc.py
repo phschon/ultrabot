@@ -17,10 +17,10 @@ class Testfunc:
 
 
     async def execute(self, command, message):
-        if not len(command) == 2:
+        if not len(command) == 1:
             await self.client.send_message(message.channel, 'Wrong number of arguments. {}'.format(Testfunc.helpstr))
             return
-        elif command[1] == 'help':
+        elif command[0] == 'help':
             await self.help(message)
             return
 
@@ -30,19 +30,19 @@ class Testfunc:
             self.runner = modules.testfuncrunner.Testfuncrunner(self.client)
             self.dic[message.channel.id] = self.runner
             
-        if command[1] == 'start':
+        if command[0] == 'start':
             if self.runner.isrunning():
                 await self.client.send_message(message.channel, 'Task already started.')
             else:
                 self.runner.setrunning(True)
                 self.client.loop.create_task(self.runner.run(message))
-        elif command[1] == 'stop':
+        elif command[0] == 'stop':
             if self.runner.isrunning():
                 self.runner.setrunning(False)
                 del self.dic[message.channel.id]
             else:
                 await self.client.send_message(message.channel, 'Task not running.')
-        elif command[1] == 'status':
+        elif command[0] == 'status':
             if self.runner.isrunning():
                 await self.client.send_message(message.channel, 'Task running.')
             else:

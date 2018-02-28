@@ -11,12 +11,12 @@ class Help:
 
 
     async def execute(self, command, message):
-        if len(command) == 1:
+        if len(command) == 0:
             await self.help(message)
-        elif not command[1] in self.dic:
-            await self.client.send_message(message.channel, 'Error. `{}` is not a valid command.'.format(command[1]))
+        elif not command[0] in self.dic:
+            await self.client.send_message(message.channel, 'Error. `{}` is not a valid command.'.format(command[0]))
         else:
-            await self.dic[command[1]].help(message)
+            await self.dic[command[0]].help(message)
 
 
 
