@@ -33,6 +33,7 @@ Feel free to open issues for suggestions or contribute your own module :)
 * **Python3.4+**
 * [discord.py](https://github.com/Rapptz/discord.py) library
 * `asyncio` library
+* [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) library
 
 
 You can install the dependencies with pip using
