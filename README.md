@@ -11,7 +11,6 @@ At the moment the following functionalities are avaibalbe:
 * `random`: generate pseudo-random numbers in the form of pen&paper die throws
 * `test`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers. To remove this from a running bot, delete the occurrences in lines 7, 13 and 16 in `ultrabot.py`
 
-
 ## TODO
 
 * (fix) music player - WIP
@@ -22,7 +21,8 @@ At the moment the following functionalities are avaibalbe:
 
 ## Notes
 
-* `template.py` contains sample code for creating new functionalities. Adapt line 10, 14, 16-19, 44, the execute function and the file name for the individual purpose
+* `metamodule.py` is the base class which all modules must inherit. It specifies methods that are needed by the bot and must be implemented.
+* `template.py` shows sample code for creating new functionalities. Adapt line 10, 14, 16-19, 44, the execute function and the file name for the individual purpose
 * In order to deploy the bot, you will need to register it using your discord account. More infos: https://discordapp.com/developers/docs/topics/oauth2
 
 
@@ -33,7 +33,7 @@ At the moment the following functionalities are avaibalbe:
 * `asyncio` library
 
 
-You can install the dependencies with pip doing
+You can install the dependencies with pip using
 
 ```
 pip install -r requirements.txt
