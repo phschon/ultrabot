@@ -31,7 +31,7 @@ for mod in mods:
             name = instance.get_command()
             print(name + " created")
             tasks[name] = instance
-            tip = tip + ' `!' + name[1:] + '`,'
+            tip = tip + ' `!' + name + '`,'
 
 
 # strip the trailing ','
