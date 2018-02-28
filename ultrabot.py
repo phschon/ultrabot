@@ -14,7 +14,7 @@ client = discord.Client()
 # tasks = {'test' : testfunc.Testfunc(client), 'random' : randomgen.Randomgen(client), 'music' : play_music.Music(client)}
 tasks = {}
 
-tip = 'Available commands:'
+tip = 'Available commands: `!list`,'
 
 # load all valid modules from the modules subfolder
 pysearchre = re.compile('.py$', re.IGNORECASE)
