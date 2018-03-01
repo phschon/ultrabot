@@ -1,6 +1,6 @@
 import discord
 import asyncio
-import modules.testfuncrunner
+import plugins.testfuncrunner
 import metamodule
 
 class Testfunc(metamodule.Meta):

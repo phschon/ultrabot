@@ -28,30 +28,27 @@ def get_help_msg() -> str:
     """
 
 
-def load_modules(client: discord.Client):
-    """ load all valid modules from the modules subfolder """
+def load_plugins(client: discord.Client):
+    """ load all valid plugins from the plugins subfolder """
     pysearchre = re.compile('.py$', re.IGNORECASE)
-    module_path = os.listdir(os.path.join(os.path.dirname(__file__), 'modules'))
-    modfiles = filter(pysearchre.search, module_path)
-    form_module = lambda fp: '.' + os.path.splitext(fp)[0]
-    mods = map(form_module, modfiles)
-    importlib.import_module('modules')
+    plugin_path = os.listdir(os.path.join(os.path.dirname(__file__), 'plugins'))
+    modfiles = filter(pysearchre.search, plugin_path)
+    form_plugin = lambda fp: '.' + os.path.splitext(fp)[0]
+    mods = map(form_plugin, modfiles)
+    importlib.import_module('plugins')
     for mod in mods:
-        # TODO use dir() to iterate over all classes and check if class inherts Meta
-        # -> one module for multiple commands
         if not mod.startswith('.__'):
-            p = importlib.import_module(mod, package="modules")
-            main_class = getattr(p, mod[1:].title())
-            instance = main_class(client)
-            if isinstance(instance, metamodule.Meta):
-                name = instance.get_command()
-                print("Module loaded: " + name)
-                TASKS[name] = instance
+            p = importlib.import_module(mod, package="plugins")
+    for c in metamodule.Meta.__subclasses__():
+        instance = c(client)
+        print("Module loaded: " + instance.get_command())
+        TASKS[instance.get_command()] = instance
+
 
 
 def run_client():
     client = discord.Client()
-    load_modules(client)
+    load_plugins(client)
 
     @client.event
     async def on_ready():
