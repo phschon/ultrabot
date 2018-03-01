@@ -74,7 +74,6 @@ def run_client():
         # if command is 'list', print avaibalbe commands
         if command[0] == 'list':
             await client.send_message(message.channel, get_help_msg())
->>>>>>> 53444aad2108d06a45a9990badd6e741a4cba593
             return
 
         if command[0] == 'help' and not len(command) == 2:
