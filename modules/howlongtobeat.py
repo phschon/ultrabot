@@ -97,11 +97,32 @@ class Howlongtobeat(metamodule.Meta):
         # create the message
         game_message = "**%s**\n" % game_object["title"]
         game_message += "```"
-        for times in game_object["times"]:
-            game_message += "%s: %s\n" % (times["playstyle"], times["hours"])
+        # only add time information if available
+        if(game_object["times"]):
+            # find the longest playstyle string length
+            longest_ps_string = max([times["playstyle"] for times in game_object["times"]], key=len)
+            length_of_longest_ps_string = len(longest_ps_string) if longest_ps_string else 0
+            # find the longest playtime  string length
+            longest_pt_string = max([times["hours"] for times in game_object["times"]], key=len)
+            length_of_longest_pt_string = len(longest_pt_string) if longest_pt_string else 0
+            # iterate over each playstyle
+            for times in game_object["times"]:
+                # add right padded playstyle
+                if(len(times["playstyle"]) < length_of_longest_ps_string):
+                    game_message += times["playstyle"] + ":" + " "*(length_of_longest_ps_string-len(times["playstyle"])+1)
+                else:
+                    game_message += "%s: " % times["playstyle"]
+                 # add left padded hours
+                game_message += " "*(length_of_longest_pt_string-len(times["hours"])) + times["hours"] + "\n"
+        # add no information available message
+        else:
+            game_message += "No cleartime information available"
+        # close message
         game_message += "```"
 
+
         return game_message
+
 
     # formats the info message string to show how many games where found
     #
@@ -114,4 +135,4 @@ class Howlongtobeat(metamodule.Meta):
             return 'I couldn\'t find any games for **%s**' % search_string
         else:
             plural = "games" if number_of_results > 1 else "game"
-            return 'I found %d %s for **%s**:' % (number_of_results, plural, search_string)
+            return 'I found **%d** %s for **%s**:' % (number_of_results, plural, search_string)
