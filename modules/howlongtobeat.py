@@ -75,9 +75,14 @@ class Howlongtobeat(metamodule.Meta):
     def _getGameInfo(self, game_soup):
         # parsing straight forward through HowLongToBeat's HTML
         game_title = game_soup.h3.a.text
-        # parse the Playstyle Titles and hours
-        titles = game_soup.select('.search_list_tidbit.shadow_text')
-        hours  = game_soup.select('.search_list_tidbit.center')
+        # parse the Playstyle Titles
+        titles =  game_soup.select('.search_list_tidbit.shadow_text')
+        titles += game_soup.select('.search_list_tidbit_short.shadow_text')
+        titles += game_soup.select('.search_list_tidbit_long.shadow_text')
+        # parse the Playtime hours
+        hours =  game_soup.select('.search_list_tidbit.center')
+        hours += game_soup.select('.search_list_tidbit_short.center')
+        hours += game_soup.select('.search_list_tidbit_long.center')
         # return the game oject
         return {
             "title": game_title,
