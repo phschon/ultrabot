@@ -24,6 +24,8 @@ mods = map(form_module, modfiles)
 importlib.import_module('modules')
 for mod in mods:
     if not mod.startswith('.__'):
+        # TODO use dir() to iterate over all classes and check if class inherts Meta
+        # -> one module for multiple commands
         p = importlib.import_module(mod, package="modules")
         main_class = getattr(p, mod[1:].title())
         instance = main_class(client)
