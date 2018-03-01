@@ -6,3 +6,4 @@ env/
 install/
 *swag.py
 *archive
+.idea/
