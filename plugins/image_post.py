@@ -6,6 +6,8 @@ import asyncio
 
 import metamodule
 
+import urllib.request, json
+
 # pro0gramm Plugin
 #
 # Searches for random images on pro0gramm form the popupar section
@@ -104,3 +106,48 @@ class pr0gramm(metamodule.Meta):
             # 1 tag
             else:
                 return 'Here\'s what I found for **%s**:' % tags[0]
+
+
+
+class reddit(metamodule.Meta):
+    def __init__(self, client):
+        self.client = client
+        self.command = 'reddit'
+        self.helpstr = '''Supported Commands:
+
+        - `command 1`: does something
+        - `command 2`: does something else'''
+
+
+    def get_command(self):
+        return self.command
+
+    async def execute(self, command, message):
+        if len(command) == 1 and command[0] == 'help':
+            await self.help(message)
+            return
+
+        if len(command) == 1:
+            subred = command[0]
+        else:
+            # TODO list of subreddits
+            subred = 'shitty_car_mods'
+
+        try:
+            with urllib.request.urlopen("https://www.reddit.com/r/shitty_car_mods/new.json?sort=new") as url:
+                j = json.loads(url.read().decode())
+        except urllib.error.HTTPError:
+            await self.client.send_message(message.channel, 'Error: Too many requests. I will soon be authenticating via OAuth...for sure...')
+            return
+
+        
+        index = random.randrange(len(j['data']['children']))
+        print(index)
+        img = j['data']['children'][index]['data']['url']
+        print(type(j['data']['children']))
+        await self.client.send_message(message.channel, 'Look at this:\n{}'.format(img))
+
+
+
+    async def help(self, message):
+        await self.client.send_message(message.channel, '`template` - Default template.\n\n{}'.format(self.helpstr))
