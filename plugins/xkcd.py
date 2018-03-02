@@ -1,3 +1,4 @@
+import random
 import requests
 
 import discord
@@ -14,28 +15,36 @@ class Xkcd(metamodule.Meta):
     # help message
     async def help(self, message):
         helpstr = """ Gets comics from **xkcd.com**
-                - `!%s`: Get the latest xkcd comic
-                - `!%s <no>`: Get xkcd number <no>
-        """ % tuple([self.get_command()]*2)
+                - `!%s`: random xkcd comic
+                - `!%s <no>`: xkcd comic number <no>
+                - `!%s latest`:latest xkcd comic
+        """ % tuple([self.get_command()]*3)
         await self.client.send_message(message.channel, helpstr)
 
     # functionality
     async def execute(self, command, message):
         # no further parameters provided
         # ===============
-        # get latest xkcd
+        # random xkcd
         # ===============
         if not command:
-            # get the latest comic
+            # get the latest comic to check for the number of available comics
             response = requests.get('http://xkcd.com/info.0.json')
             if(response.status_code == 200):
-                # parse the information
-                comic_information = response.json()
-                await self.client.send_message(message.channel, 'Here\'s the latest **xkcd** comic:')
-                # XKCD embed
-                comic_embed = self._createComicEmbed(comic_information)
-                await self.client.send_message(message.channel, embed=comic_embed)
-            # 404 or anything else not 200
+                max_number = response.json()['num']
+                await self.client.send_message(message.channel, 'There are currently **%d** comics on **xkcd.com**, here\'s a random one:' % max_number)
+                # get a random comic
+                response = requests.get('http://xkcd.com/%d/info.0.json' % random.randint(1, max_number+1))
+                if(response.status_code == 200):
+                    # parse the information
+                    comic_information = response.json()
+                    # XKCD embed
+                    comic_embed = self._createComicEmbed(comic_information)
+                    await self.client.send_message(message.channel, embed=comic_embed)
+                # something went wrong
+                else:
+                    await self.client.send_message(message.channel, 'Sorry I coudn\'t reach **xkcd.com**')
+            # something went wrong
             else:
                 await self.client.send_message(message.channel, 'Sorry I coudn\'t reach **xkcd.com**')
         # further parameters provied
@@ -44,11 +53,10 @@ class Xkcd(metamodule.Meta):
             await self.client.send_message(message.channel, 'I\'m afraid you\'re using it wrong...')
             await self.help(message)
         # exactly one command
-        # =================================
-        # get xkcd with the number provided
-        # =================================
         else:
-            # check if the parameter was a number
+            # =================================
+            # get xkcd with the number provided
+            # =================================
             if command[0].isdigit():
                 # get the comic with the number provided
                 response = requests.get('http://xkcd.com/%s/info.0.json' % command[0])
@@ -63,8 +71,25 @@ class Xkcd(metamodule.Meta):
                 else:
                     await self.client.send_message(message.channel, 'Sorry but it seems that **xkcd** number **%s** has not been created yet...' % command[0])
             # provied parameter was not a number
+            # =================================
+            # latest xkcd
+            # =================================
+            elif(command[0] == 'latest'):
+                # get the latest comic
+                response = requests.get('http://xkcd.com/info.0.json')
+                if(response.status_code == 200):
+                    # parse the information
+                    comic_information = response.json()
+                    await self.client.send_message(message.channel, 'Here\'s the latest **xkcd** comic:')
+                    # XKCD embed
+                    comic_embed = self._createComicEmbed(comic_information)
+                    await self.client.send_message(message.channel, embed=comic_embed)
+                # 404 or anything else not 200
+                else:
+                    await self.client.send_message(message.channel, 'Sorry I coudn\'t reach **xkcd.com**')
+            # unsupported parameter
             else:
-                await self.client.send_message(message.channel, 'Sorry but **%s** does not seem to be a number...' % command[0])
+                await self.client.send_message(message.channel, 'Sorry but **%s** is not supported...' % command[0])
                 await self.help(message)
 
 
