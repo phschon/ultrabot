@@ -113,10 +113,18 @@ class reddit(metamodule.Meta):
     def __init__(self, client):
         self.client = client
         self.command = 'reddit'
+        self.redlist = ['shitty_car_mods',
+                       'programmerhumor',
+                       'earthporn',
+                       'funny',
+                       'crappydesign',
+                       'punny',
+                       'justrolledintotheshop']
         self.helpstr = '''Supported Commands:
 
-        - `command 1`: does something
-        - `command 2`: does something else'''
+        - without further parameters, get a random post from a secret list
+        - `<subreddit>`: get a random post from the `subreddit` sorted by `new`
+        - `<subreddit>` `<new/hot>`: get a random post from the `subreddit` either sorted by `new` or `hot`'''
 
 
     def get_command(self):
@@ -127,27 +135,45 @@ class reddit(metamodule.Meta):
             await self.help(message)
             return
 
+
+        subred = self.redlist[random.randrange(len(self.redlist))]
+
+        # TODO new/hot might not work
         if len(command) == 1:
-            subred = command[0]
-        else:
-            # TODO list of subreddits
-            subred = 'shitty_car_mods'
+            if command[0] == 'new' or command[0] == 'hot':
+                sort = command[0]
+            else:
+                subred = command[0]
+                sort = 'new'
+            
+
+        if len(command) == 2:
+            if command[1] == 'new' or command[1] == 'hot':
+                subred = command[0]
+                sort = command[1]
+            else:
+                await self.client.send_message(message.channel, command[1] + ' is not a valid argument.')
+                return
+
 
         try:
-            with urllib.request.urlopen("https://www.reddit.com/r/shitty_car_mods/new.json?sort=new") as url:
+            with urllib.request.urlopen("https://www.reddit.com/r/" + subred + "/new.json?sort=new") as url:
                 j = json.loads(url.read().decode())
         except urllib.error.HTTPError:
             await self.client.send_message(message.channel, 'Error: Too many requests. I will soon be authenticating via OAuth...for sure...')
             return
 
         
-        index = random.randrange(len(j['data']['children']))
-        print(index)
+        # TODO this may crash because not all posts have an image
+        try:
+            index = random.randrange(len(j['data']['children']))
+        except ValueError:
+            await self.client.send_message(message.channel, 'I did not find anything for subreddit ' + subred + '.')
+
         img = j['data']['children'][index]['data']['url']
-        print(type(j['data']['children']))
-        await self.client.send_message(message.channel, 'Look at this:\n{}'.format(img))
+        await self.client.send_message(message.channel, 'Look at this post from ' + subred + ':\n{}'.format(img))
 
 
 
     async def help(self, message):
-        await self.client.send_message(message.channel, '`template` - Default template.\n\n{}'.format(self.helpstr))
+        await self.client.send_message(message.channel, '`reddit` - Get reddit posts either from a subreddit of your choice or one of our secret list.\n\n{}'.format(self.helpstr))
