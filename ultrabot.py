@@ -23,7 +23,7 @@ def load_token() -> str:
 def get_help_msg() -> str:
     commands = ", ".join([f"`!{task}`" for task in TASKS.keys()])
     return f"""Available commands: `!list`, {commands}
-    
+
     Use `!help <command>` for information about commands.
     """
 
@@ -94,7 +94,15 @@ def run_client():
 
         # command is in dict, forward command and parameters, as well as the entire message, to functionality object
         com = command.pop(0)
-        client.loop.create_task(TASKS[com].execute(command, message))
+        # check if the number of parameters exceed the ones allowed for the plugin
+        max_para = TASKS[com].get_max_number_of_parameters()
+        # if the number of parameters exceed the maximum give an error message and send the plugin's help message
+        if(max_para and len(command) > max_para):
+            await client.send_message(message.channel, f'Too many arguments for `!{com}`')
+            await TASKS[com].help(message)
+        # run the plugin
+        else:
+            client.loop.create_task(TASKS[com].execute(command, message))
 
     client.run(load_token())
 

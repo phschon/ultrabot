@@ -21,3 +21,6 @@ class Meta(metaclass=ABCMeta):
     @abstractmethod
     async def help(self, message):
         pass
+
+    def get_max_parameters(self):
+        return None
