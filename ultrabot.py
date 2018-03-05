@@ -95,7 +95,7 @@ def run_client():
         # command is in dict, forward command and parameters, as well as the entire message, to functionality object
         com = command.pop(0)
         # check if the number of parameters exceed the ones allowed for the plugin
-        max_para = TASKS[com].get_max_number_of_parameters()
+        max_para = TASKS[com].get_max_parameters()
         # if the number of parameters exceed the maximum give an error message and send the plugin's help message
         if(max_para and len(command) > max_para):
             await client.send_message(message.channel, f'Too many arguments for `!{com}`')

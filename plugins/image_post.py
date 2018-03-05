@@ -131,7 +131,7 @@ class reddit(metamodule.Meta):
         return self.command
 
     async def execute(self, command, message):
-        if len(command) == 1 and command[0] == 'help':
+        if (len(command) == 1 and command[0] == 'help') or len(command) > 2:
             await self.help(message)
             return
 
