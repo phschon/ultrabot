@@ -12,6 +12,7 @@ At the moment the following functionalities are avaibalbe:
 * `random`: generate pseudo-random numbers in the form of pen&paper die throws
 * `howlong`: get game info from [howlongtobeat.com](https://howlongtobeat.com)
 * `pr0`: get a random image or video related to any number of tags specified
+* `xkcd`: post random, latest or specific xkcd comic
 * `test`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers.
 
 ## TODO
