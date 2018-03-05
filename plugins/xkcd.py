@@ -21,6 +21,10 @@ class Xkcd(metamodule.Meta):
         """ % tuple([self.get_command()]*3)
         await self.client.send_message(message.channel, helpstr)
 
+    # maximum number of allowed parameters
+    def get_max_parameters(self):
+        return 1
+
     # functionality
     async def execute(self, command, message):
         # no further parameters provided
@@ -48,11 +52,7 @@ class Xkcd(metamodule.Meta):
             else:
                 await self.client.send_message(message.channel, 'Sorry I coudn\'t reach **xkcd.com**')
         # further parameters provied
-        # too many
-        elif len(command) > 1:
-            await self.client.send_message(message.channel, 'I\'m afraid you\'re using it wrong...')
-            await self.help(message)
-        # exactly one command
+        # exactly one command (because more are restricted by get_max_parameters())
         else:
             # =================================
             # get xkcd with the number provided
