@@ -38,7 +38,7 @@ class Xkcd(metamodule.Meta):
                 max_number = response.json()['num']
                 await self.client.send_message(message.channel, 'There are currently **%d** comics on **xkcd.com**, here\'s a random one:' % max_number)
                 # get a random comic
-                response = requests.get('http://xkcd.com/%d/info.0.json' % random.randint(1, max_number+1))
+                response = requests.get('http://xkcd.com/%d/info.0.json' % random.randint(1, max_number))
                 if(response.status_code == 200):
                     # parse the information
                     comic_information = response.json()
