@@ -8,7 +8,7 @@ import metamodule
 
 import urllib.request, json
 
-# pro0gramm Plugin
+# pr0gramm Plugin
 #
 # Searches for random images on pro0gramm form the popupar section
 # An arbitrary amount of search tags can be provided
@@ -39,7 +39,7 @@ class pr0gramm(metamodule.Meta):
             await self.client.send_message(message.channel, self._generateUrl(random_item))
         # if we couldn't get anything send an error message
         else:
-            await self.client.send_message(message.channel, 'I couldn\'t reach **pro0gramm.com**')
+            await self.client.send_message(message.channel, 'I couldn\'t find anything for %s' % self._formatTags(command))
 
 
 
@@ -59,8 +59,12 @@ class pr0gramm(metamodule.Meta):
         if res.status_code == 200:
             # parse the items
             items = res.json()["items"]
-            # get a random item
-            return items[random.randint(0, len(items))]
+            if items:
+                # get a random item
+                return items[random.randint(0, len(items))]
+            else:
+                return None
+
         # if the response code was not 200 something went wrong
         else:
             return None
