@@ -46,3 +46,7 @@ You can install the dependencies with pip using
 ```
 pip install -r requirements.txt
 ```
+
+## Known Bugs
+
+* `music.py`: The class is not threadsafe. Combinations of parallel commands or function calls may trigger unintended/deprecated behaviour or even crash the bot. A potential fix is coming soon.
