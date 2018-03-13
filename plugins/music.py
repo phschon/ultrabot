@@ -2,6 +2,7 @@ import discord
 import asyncio
 import metamodule
 import copy
+import re
 
 class Music_wrapper:
     def __init__(self, player, message, url):
@@ -24,7 +25,7 @@ class Music(metamodule.Meta):
         - `add <url>`: Inserts <url> to queue
         - `pause`: Pauses the current song
         - `resume`: Resumes the current song
-        - `play`: Resumes playing the queue
+        - `play <url>`: Instantly plays <url>, resumes playing the queue if no url is given
         - `stop`: Stops playing, but keeps queue
         - `list`: shows all songs in the queue
         - `skip`: skips the current song
@@ -36,7 +37,7 @@ class Music(metamodule.Meta):
         self.voice = None
         self.s_list = asyncio.Queue()
         self.current_song = None
-        self.volume = 0.5
+        self.volume = 0.2
         self.wait_for_song = asyncio.Event()
         self.play_songs = self.client.loop.create_task(self.exec_playlist())
         self.command = 'music'
@@ -45,15 +46,43 @@ class Music(metamodule.Meta):
         return self.command
 
 
+    def is_url(self, url):
+        regex = re.compile(
+            r'^(?:http|ftp)s?://' # http:// or https://
+            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+            r'localhost|' #localhost...
+            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+            r'(?::\d+)?' # optional port
+            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+        return regex.match(url)
+        pass
+
+
     
-    async def play(self, message):
+    async def play(self, message, url = None):
+        if url:
+            if not self.is_url(url):
+                await self.client.send_message(message.channel, 'Not a valid URL.')
+                return
+
+            if self.voice == None:
+                await self.summon_channel(message.author.voice_channel, message.channel)
+            if self.current_song:
+                self.current_song.player.pause()
+            player = await self.voice.create_ytdl_player(url, after=self.play_next)
+            player.volume = self.volume
+            self.current_song = Music_wrapper(player, message, url)
+            self.current_song.player.start()
+            return
+
         if self.current_song == None:
             await self.client.send_message(message.channel, 'Nothing in the queue to play.')
             return
+
         try:
             self.current_song.player.start()
         except RuntimeError:
-            await self.resume(message)
+            self.current_song.player.resume()
 
 
     
@@ -117,6 +146,10 @@ class Music(metamodule.Meta):
 
 
     async def add(self, message, url):
+        if not self.is_url(url):
+            await self.client.send_message(message.channel, 'Not a valid URL.')
+            return
+
         print(url)
         if self.voice == None:
             if not await self.summon_channel(message.author.voice_channel, message.channel):
@@ -186,7 +219,10 @@ class Music(metamodule.Meta):
             await self.client.send_message(message.channel, 'Nothing playing.')
             return
 
-        self.current_song.player.resume()
+        try:
+            self.current_song.player.start()
+        except:
+            self.current_song.player.resume()
 
 
 
@@ -243,8 +279,10 @@ class Music(metamodule.Meta):
             await self.stop(message)
         elif command[0] == 'list':
             await self.list(message.channel)
-        elif command[0] == 'play':
+        elif command[0] == 'play' and len(command) == 1:
             await self.play(message)
+        elif command[0] == 'play' and len(command) == 2:
+            await self.play(message, command[1])
         elif command[0] == 'skip':
             await self.skip(message)
         elif command[0] == 'shut' and command[1] == 'up':
