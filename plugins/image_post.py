@@ -8,7 +8,7 @@ import metamodule
 
 import urllib.request, json
 
-# pro0gramm Plugin
+# pr0gramm Plugin
 #
 # Searches for random images on pro0gramm form the popupar section
 # An arbitrary amount of search tags can be provided
@@ -39,7 +39,7 @@ class pr0gramm(metamodule.Meta):
             await self.client.send_message(message.channel, self._generateUrl(random_item))
         # if we couldn't get anything send an error message
         else:
-            await self.client.send_message(message.channel, 'I couldn\'t reach **pro0gramm.com**')
+            await self.client.send_message(message.channel, 'I couldn\'t find anything for %s' % self._formatTags(command))
 
 
 
@@ -59,8 +59,12 @@ class pr0gramm(metamodule.Meta):
         if res.status_code == 200:
             # parse the items
             items = res.json()["items"]
-            # get a random item
-            return items[random.randint(0, len(items))]
+            if items:
+                # get a random item
+                return items[random.randint(0, len(items))]
+            else:
+                return None
+
         # if the response code was not 200 something went wrong
         else:
             return None
@@ -81,6 +85,32 @@ class pr0gramm(metamodule.Meta):
             return 'http://img.pr0gramm.com/%s' % item["image"]
 
 
+    # formats the list of tags into a natural sounding sentence
+    # Example: tag1, tag2 and tag3
+    # Example: tag1 and tag2
+    #
+    # @param tags - the search tags
+    #
+    # @return formatted info string
+    def _formatTags(self, tags):
+        # no search tags provided
+        if not tags:
+            return ""
+        # search tags provied
+        else:
+            # more than 2
+            if len(tags) > 2:
+                tag_message = ""
+                tag_message += "".join(["**%s**, " % tag for tag in  tags[:len(tags)-2]])
+                tag_message += "**%s** and **%s**" % (tags[len(tags)-2], tags[len(tags)-1])
+                return tag_message
+            # exactly 2
+            elif len(tags) == 2:
+                return "**%s** and **%s**" % (tags[0], tags[1])
+            # exactly 1
+            else:
+                return "**%s**" % tags[0]
+
 
     # generates the info message for the bot response for the tags provided
     # for the search
@@ -94,18 +124,7 @@ class pr0gramm(metamodule.Meta):
             return 'Here\'s what I found:'
         # search tags provided
         else:
-            # 2 tags or more
-            if len(tags) > 2:
-                message = 'Here\'s what I found for '
-                message += "".join(["**%s**, " % tag for tag in  tags[:len(tags)-2]])
-                message += "**%s** and **%s**:" % (tags[len(tags)-2], tags[len(tags)-1])
-                return message
-            # 2 tags
-            elif len(tags) == 2:
-                return 'Here\'s what I found for **%s** and **%s**:' % (tags[0], tags[1])
-            # 1 tag
-            else:
-                return 'Here\'s what I found for **%s**:' % tags[0]
+            return 'Here\'s what I found for %s:' % self._formatTags(tags)
 
 
 
@@ -145,7 +164,7 @@ class reddit(metamodule.Meta):
             else:
                 subred = command[0]
                 sort = 'new'
-            
+
 
         if len(command) == 2:
             if command[1] == 'new' or command[1] == 'hot':
@@ -163,7 +182,7 @@ class reddit(metamodule.Meta):
             await self.client.send_message(message.channel, 'Error: Too many requests. I will soon be authenticating via OAuth...for sure...')
             return
 
-        
+
         # TODO this may crash because not all posts have an image
         try:
             index = random.randrange(len(j['data']['children']))
