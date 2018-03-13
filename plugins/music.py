@@ -104,6 +104,7 @@ class Music(metamodule.Meta):
             self.current_song.player.volume = self.volume
             self.current_song.player.start()
             await self.wait_for_song.wait()
+            self.current_song = None
             
 
 
