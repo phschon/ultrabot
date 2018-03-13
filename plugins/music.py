@@ -252,7 +252,7 @@ class Music(metamodule.Meta):
 
     async def playing(self, message):
         if self.current_song:
-            await self.client.send_message(message.channel, 'Currently playing: {}'.format(self.current_song.message))
+            await self.client.send_message(message.channel, 'Currently playing: `{}`'.format(self.current_song.message))
         else:
             await self.client.send_message(message.channel, 'Nothing playing.')
 
