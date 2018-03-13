@@ -26,13 +26,13 @@ class Music(metamodule.Meta):
         - `pause`: Pauses the current song
         - `resume`: Resumes the current song
         - `play <url>`: Instantly plays <url>, resumes playing the queue if no url is given
+        - `playing`: Shows the name of the current song
         - `stop`: Stops playing, but keeps queue
         - `list`: shows all songs in the queue
         - `skip`: skips the current song
         - `disconnect`: Bot disconnects from the voice channel and deletes the queue
         - `shut up` or `clear`: Stops playing and deletes the queue
         - `volume <vol>`: Sets volume to <vol>'''
-        # - `shut up`: Bot disconnects from the voice channel and deletes queue
         # check if bot is connected to a voice channel
         self.voice = None
         self.s_list = asyncio.Queue()
@@ -67,13 +67,18 @@ class Music(metamodule.Meta):
 
             if self.voice == None:
                 await self.summon_channel(message.author.voice_channel, message.channel)
-            if self.current_song:
-                self.current_song.player.pause()
+
             player = await self.voice.create_ytdl_player(url, after=self.play_next)
             player.volume = self.volume
-            self.current_song = Music_wrapper(player, message, url)
-            self.current_song.player.start()
-            return
+            if self.current_song:
+                self.current_song.player.pause()
+                self.current_song = Music_wrapper(player, message, url)
+                self.current_song.player.start()
+                await self.client.send_message(self.current_song.channel, 'Now playing song: `{}`'.format(self.current_song.message))
+                return
+            else:
+                await self.s_list.put(Music_wrapper(player, message, url))
+                return
 
         if self.current_song == None:
             await self.client.send_message(message.channel, 'Nothing in the queue to play.')
@@ -152,8 +157,7 @@ class Music(metamodule.Meta):
 
         print(url)
         if self.voice == None:
-            if not await self.summon_channel(message.author.voice_channel, message.channel):
-                return
+            await self.summon_channel(message.author.voice_channel, message.channel)
 
         player = await self.voice.create_ytdl_player(url, after=self.play_next)
         player.volume = self.volume
@@ -246,6 +250,12 @@ class Music(metamodule.Meta):
         self.current_song.player.stop()
 
 
+    async def playing(self, message):
+        if self.current_song:
+            await self.client.send_message(message.channel, 'Currently playing: {}'.format(self.current_song.message))
+        else:
+            await self.client.send_message(message.channel, 'Nothing playing.')
+
 
 
 
@@ -289,6 +299,8 @@ class Music(metamodule.Meta):
             await self.clear(message)
         elif command[0] == 'clear':
             await self.clear(message)
+        elif command[0] == 'playing':
+            await self.playing(message)
         elif command[0] == 'disconnect':
             if not self.voice == None:
                 self.s_list = asyncio.Queue
