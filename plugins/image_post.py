@@ -61,7 +61,7 @@ class pr0gramm(metamodule.Meta):
             items = res.json()["items"]
             if items:
                 # get a random item
-                return items[random.randint(0, len(items))]
+                return items[random.randrange(0, len(items))]
             else:
                 return None
 
