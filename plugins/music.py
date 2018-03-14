@@ -77,7 +77,9 @@ class Music(metamodule.Meta):
                 await self.client.send_message(self.current_song.channel, 'Now playing song: `{}`'.format(self.current_song.message))
                 return
             else:
-                await self.s_list.put(Music_wrapper(player, message, url))
+                song = Music_wrapper(player, message, url)
+                print(song)
+                await self.s_list.put(song)
                 return
 
         if self.current_song == None:
@@ -104,6 +106,9 @@ class Music(metamodule.Meta):
             self.current_song.player.volume = self.volume
             self.current_song.player.start()
             await self.wait_for_song.wait()
+            print(self.s_list.qsize)
+            if self.s_list.qsize() == 0:
+                await self.client.send_message(self.current_song.channel, 'Queue empty.')
             self.current_song = None
             
 

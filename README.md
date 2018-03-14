@@ -1,6 +1,6 @@
 # UltraBot - yet another discord bot
 
-A simple, extensible and lightweight discord bot written in Python. Control the bot using `!<command>` or `!help <command>` from any discord server's channel the bot is connected to or sending a private message.
+A simple, extensible and lightweight discord bot written in Python. Control the bot using `!<command>`, `!help <command>` or `!list` from any discord server's channel the bot is connected to or sending a private message.
 
 
 ## Plugins
