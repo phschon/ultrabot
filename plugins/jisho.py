@@ -35,10 +35,12 @@ class Jisho(metamodule.Meta):
             if(response.status_code == 200):
                 # get the response as JSON
                 dict_info = response.json()
-                # create the embed
-                em = self._createEmbedReponse(dict_info['data'], command[0])
                 await self.client.send_message(message.channel, 'There you go')
-                await self.client.send_message(message.channel, embed=em)
+                # first 3 vocabs found
+                for word in dict_info['data'][:3]:
+                    # create the embed
+                    em = self._createEmbedReponse(word)
+                    await self.client.send_message(message.channel, embed=em)
             # no 200
             else:
                 await self.client.send_message(message.channel, 'Can\'t reach jisho.org')
@@ -47,18 +49,18 @@ class Jisho(metamodule.Meta):
 
     # Creates the embed message for the vocabulary
     #
-    # @param jisho_response_data - data object as returned by the jisho API
-    # @param search_tag - the tag searched for
+    # @param word - a word object extracted from the jisho API response
     #
     # @return message embed
-    def _createEmbedReponse(self, jisho_response_data, search_tag):
+    def _createEmbedReponse(self, word):
 
-        # only get the very first entry
-        word = jisho_response_data[0]
+        # link to the vocabulary
+        link = 'http://jisho.org/search/%s' % (word['japanese'][0]['reading'] if not 'word' in word['japanese'][0].keys() else word['japanese'][0]['word'])
 
-        em_mess = discord.Embed(description='[Further information](http://jisho.org/search/%s)' % search_tag, color=0x5CD738)
+        # embed message object
+        em_mess = discord.Embed(description='[Further information](%s)' % link, color=0x5CD738)
         # japanese reading message
-        em_mess.set_author(name='Jisho.org', url='http://jisho.org/search/%s' % search_tag,  icon_url='https://avatars1.githubusercontent.com/u/12574115?s=200&v=4')
+        em_mess.set_author(name='Jisho.org', url='http://jisho.org', icon_url='https://avatars1.githubusercontent.com/u/12574115?s=200&v=4')
 
         # format reading message
         reading_message = ""
