@@ -41,6 +41,13 @@ class Jisho(metamodule.Meta):
                     # create the embed
                     em = self._createEmbedReponse(word)
                     await self.client.send_message(message.channel, embed=em)
+                # see if not all results were shown
+                if len(dict_info['data']) > 0:
+                    # link to all search results
+                    info_title = 'Showing **3** of **%d** results' % len(dict_info['data'])
+                    info_desc  = 'You can find them all [here](http://jisho.org/search/%s)' % command[0]
+                    info_embed = discord.Embed(title=info_title, description=info_desc, color=0x5CD738)
+                    await self.client.send_message(message.channel, embed=info_embed)
             # no 200
             else:
                 await self.client.send_message(message.channel, 'Can\'t reach jisho.org')
