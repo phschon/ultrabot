@@ -14,6 +14,7 @@ At the moment the following functionalities are avaibalbe:
 * `pr0`: get a random image or video related to any number of tags specified
 * `xkcd`: post random, latest or specific xkcd comic
 * `reddit`: post a random picture from a subreddit
+* `jisho`: Japanese online dictionary [jisho.org](http://jisho.org) 
 * `test`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers.
 
 ## TODO
