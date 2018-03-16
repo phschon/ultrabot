@@ -42,7 +42,7 @@ class Jisho(metamodule.Meta):
                     em = self._createEmbedReponse(word)
                     await self.client.send_message(message.channel, embed=em)
                 # see if not all results were shown
-                if len(dict_info['data']) > 0:
+                if len(dict_info['data']) > 3:
                     # link to all search results
                     info_title = 'Showing **3** of **%d** results' % len(dict_info['data'])
                     info_desc  = 'You can find them all [here](http://jisho.org/search/%s)' % command[0]
