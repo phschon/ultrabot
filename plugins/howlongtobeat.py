@@ -48,16 +48,19 @@ class Howlongtobeat(metamodule.Meta):
                 html_soup = BeautifulSoup(res.text, 'html.parser')
                 # check for the games
                 games = html_soup.find_all('div', class_="search_list_details")
-                # send info about the number of games found
-                await self.client.send_message(message.channel, self._formatInfoMessage(len(games), search_string))
-                # send a message for every game
+                # create the bot message
+                # begin with the info message
+                response_message = self._formatInfoMessage(len(games), search_string) + "\n\n"
+                # add each game to the message
                 for game in games:
                     # parse the game inforamtion
                     game_info = self._getGameInfo(game)
                     # format the message
-                    game_message = self._formatGameMessage(game_info)
+                    game_message = self._formatGameMessage(game_info) + "\n"
                     # send the message back to the channel
-                    await self.client.send_message(message.channel, game_message)
+                    response_message += game_message
+                # send the message
+                await self.client.send_message(message.channel, response_message)
             # Not a 200 response code
             else:
                 await self.client.send_message(message.channel, "Can't reach HowLongToBeat.com")
