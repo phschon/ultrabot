@@ -7,6 +7,8 @@ import asyncio
 
 import metamodule
 
+# A Plugin to play Black Jack
+# Supports only 1 player at a time, but multiplayer support is planned
 class BlackJack(metamodule.Meta):
 
 
@@ -46,6 +48,10 @@ class BlackJack(metamodule.Meta):
             card_list_string = "\n".join([card.getFullVerbose() for card in  self.player_cards])
             card_list_string += "\n\nYour current score is: **%d**" % self._calculateScore()
             await self.client.send_message(message.channel, card_list_string)
+            # check for blackjack
+            if(self._checkBlackJack()):
+                await self.client.send_message(message.channel, "You hit a **Black Jack**, nice!, Lets play another round!")
+                self._resetGame()
             # reset the game if the cards surpass 21 in value
             if(self._checkSurpassed21()):
                 await self.client.send_message(message.channel, "Too bad, you lost! Let's play another round!")
@@ -95,6 +101,14 @@ class BlackJack(metamodule.Meta):
         # choose 1 as the value for Aces
         return sum([1 if card.getVerboseValue() == 'Ace' else card.getGameValue() for card in self.player_cards]) > 21
 
+
+    def _checkBlackJack(self):
+        if(len(self.player_cards) > 2):
+            return False
+        else:
+            num_aces = len([card for card in self.player_cards if card.getVerboseValue() == 'Ace'])
+            num_10s  = len([card for card in self.player_cards if card.getVerboseValue() == '10'])
+            return num_aces == 1 and num_10s == 1
 
 
     # calculates the maximal score that is at most 21 or the minimal score above 21 if there is no score
