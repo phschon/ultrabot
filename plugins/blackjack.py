@@ -1,6 +1,7 @@
 import itertools
 import random
 import requests
+import textwrap
 
 import discord
 import asyncio
@@ -32,8 +33,10 @@ class BlackJack(metamodule.Meta):
     async def help(self, message):
         helpstr = """ Play Backjack! Doesn't work yet...
                 - `!%s card`: Draw a new card
-                - `!%s new`: Resets the game
-        """ % tuple([self.get_command()]*2)
+                - `!%s new`: Reset the game
+                - `!%s rules`: Show rules
+                - `!%s stop`: Stop drawing new cards and take the score
+        """ % tuple([self.get_command()]*4)
         await self.client.send_message(message.channel, helpstr)
 
     # maximum number of allowed parameters
@@ -66,6 +69,22 @@ class BlackJack(metamodule.Meta):
             await self.client.send_message(message.channel, "Sure, your score is **%d**. Let's play another round!" % score)
             # reset the game
             self._resetGame()
+        # show the rules
+        elif command[0] == 'rules':
+            rules = textwrap.dedent("""
+            Black Jack is a pretty simple game, you ask me to deal you a card and then you decide, whether you want a new one or not. Your goal is to stay below 21 bot to get as close as possible.
+
+            Card Values:
+            **Numbers**: Their **number**
+            **Jack**, **Queen** and **King**: **10**
+            **Ace**: **1** or **11**
+
+            The **ace** value is automatically chosen to best fit the situation
+
+            If you don't want any new card just tell me to `stop` and you take that score
+
+            Have fun playing!""")
+            await self.client.send_message(message.channel, rules)
         # wrong argument
         else:
             await self.client.send_message(message.channel, "I don't know `%s`..." % command[0])
@@ -102,6 +121,7 @@ class BlackJack(metamodule.Meta):
         return sum([1 if card.getVerboseValue() == 'Ace' else card.getGameValue() for card in self.player_cards]) > 21
 
 
+
     def _checkBlackJack(self):
         if(len(self.player_cards) > 2):
             return False
@@ -109,6 +129,7 @@ class BlackJack(metamodule.Meta):
             num_aces = len([card for card in self.player_cards if card.getVerboseValue() == 'Ace'])
             num_10s  = len([card for card in self.player_cards if card.getVerboseValue() == '10'])
             return num_aces == 1 and num_10s == 1
+
 
 
     # calculates the maximal score that is at most 21 or the minimal score above 21 if there is no score
