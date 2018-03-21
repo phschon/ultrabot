@@ -30,7 +30,7 @@ class BlackJack(metamodule.Meta):
     async def help(self, message):
         helpstr = """ Play Backjack! Doesn't work yet...
                 - `!%s card`: Draw a new card
-                - `!%s reset`: Resets the game
+                - `!%s new`: Resets the game
         """ % tuple([self.get_command()]*2)
         await self.client.send_message(message.channel, helpstr)
 
@@ -44,18 +44,25 @@ class BlackJack(metamodule.Meta):
         if command[0] == 'card':
             self._drawCard()
             card_list_string = "\n".join([card.getFullVerbose() for card in  self.player_cards])
+            card_list_string += "\n\nYour current score is: **%d**" % self._calculateScore()
             await self.client.send_message(message.channel, card_list_string)
             # reset the game if the cards surpass 21 in value
             if(self._checkSurpassed21()):
-                await self.client.send_message(message.channel, "You lost!")
+                await self.client.send_message(message.channel, "Too bad, you lost! Let's play another round!")
                 self._resetGame()
         # reset the game
-        elif command[0] == 'reset':
+        elif command[0] == 'new':
             self._resetGame()
-            await self.client.send_message(message.channel, "I resetted the game")
+            await self.client.send_message(message.channel, "Sure thing, let's play a new game")
+        # player stops the game and gets the score
+        elif command[0] == 'stop':
+            score = self._calculateScore()
+            await self.client.send_message(message.channel, "Sure, your score is **%d**. Let's play another round!" % score)
+            # reset the game
+            self._resetGame()
         # wrong argument
         else:
-            await self.client.send_message(message.channel, "I don't understand `%s`..." % command[0])
+            await self.client.send_message(message.channel, "I don't know `%s`..." % command[0])
             await self.help(message)
 
 
@@ -88,6 +95,30 @@ class BlackJack(metamodule.Meta):
         # choose 1 as the value for Aces
         return sum([1 if card.getVerboseValue() == 'Ace' else card.getGameValue() for card in self.player_cards]) > 21
 
+
+
+    # calculates the maximal score that is at most 21 or the minimal score above 21 if there is no score
+    # below or equal to 21
+    def _calculateScore(self):
+        # points from non ace cards
+        points_of_other_cards = sum([card.getGameValue() for card in self.player_cards if not card.getVerboseValue() == 'Ace'])
+        # list of aces
+        number_of_aces = len([card for card in self.player_cards if card.getVerboseValue() == 'Ace'])
+        # permuations of aces set to on (11) and off (1)
+        ace_perm = list(itertools.product([0,1], repeat=number_of_aces))
+        # list of possibles scores
+        scores = [sum([11 if flag else 1 for flag in perm])+points_of_other_cards for perm in ace_perm]
+        print([card.getVerboseValue() for card in self.player_cards])
+        print(scores)
+        # feasible score list
+        feasible_scores = [score for score in scores if score <= 21]
+        # infeasible scores
+        infeasible_scores = [score for score in scores if score>21]
+        # return the maximum feasible score if possible, the minimal infeasible else
+        if(len(feasible_scores) > 0):
+            return max(feasible_scores)
+        else:
+            return min(infeasible_scores)
 
 
 
