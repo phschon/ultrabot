@@ -31,7 +31,7 @@ class BlackJack(metamodule.Meta):
 
     # help message
     async def help(self, message):
-        helpstr = """ Play Backjack! Doesn't work yet...
+        helpstr = """ Play Backjack!
                 - `!%s card`: Draw a new card
                 - `!%s new`: Reset the game
                 - `!%s rules`: Show rules
