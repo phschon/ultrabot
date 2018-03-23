@@ -15,7 +15,7 @@ class BlackJack(metamodule.Meta):
 
     def __init__(self, client):
         # card deck
-        self.deck = []
+        self.deck = Deck()
         # cards drawn by player
         self.player_cards = []
 
@@ -95,8 +95,7 @@ class BlackJack(metamodule.Meta):
     # shuffles the deck (with all cards) and emptys the player_cards list
     def _resetGame(self):
         # shuffle a new deck of cards
-        card_list = [Card(combination[0], combination[1]) for combination in itertools.product(range(2, 15),range(4))]
-        self.deck = random.sample(card_list, len(card_list))
+        self.deck.reset()
         # empty player cards
         self.player_cards = []
 
@@ -106,7 +105,7 @@ class BlackJack(metamodule.Meta):
     #
     # @return the card
     def _drawCard(self):
-        card = self.deck.pop()
+        card = self.deck.draw()
         self.player_cards.append(card)
         return card
 
@@ -121,7 +120,9 @@ class BlackJack(metamodule.Meta):
         return sum([1 if card.getVerboseValue() == 'Ace' else card.getGameValue() for card in self.player_cards]) > 21
 
 
-
+    # checks for a Black Jack on the first 2 cards
+    #
+    # @return true if Black Jack false otherwise
     def _checkBlackJack(self):
         if(len(self.player_cards) > 2):
             return False
@@ -156,6 +157,34 @@ class BlackJack(metamodule.Meta):
             return min(infeasible_scores)
 
 
+
+
+
+# deck of cards
+class Deck:
+
+    # constructor
+    def __init__(self):
+        # list of cards
+        self.cards = []
+        # reset the deck
+        self.reset()
+
+
+
+    # shuffles the deck (with new cards)
+    def reset(self):
+        # shuffle a new deck of cards
+        card_list = [Card(combination[0], combination[1]) for combination in itertools.product(range(2, 15),range(4))]
+        self.cards = random.sample(card_list, len(card_list))
+
+
+
+    # draws a card
+    #
+    # @return a Card
+    def draw(self):
+        return self.cards.pop()
 
 
 
