@@ -48,7 +48,7 @@ class BlackJack(metamodule.Meta):
         # draw a new card
         if command[0] == 'card':
             self._drawCard()
-            card_list_string = "\n".join([card.getFullVerbose() for card in  self.player_cards])
+            card_list_string = "  ".join([card.getFullEmojiVerbose() for card in  self.player_cards])
             card_list_string += "\n\nYour current score is: **%d**" % self._calculateScore()
             await self.client.send_message(message.channel, card_list_string)
             # check for blackjack
@@ -165,7 +165,9 @@ class Card:
 
     # constructor
     def __init__(self, value, color):
+        # card's value
         self.value = value
+        # card's color
         self.color = color
 
 
@@ -174,7 +176,9 @@ class Card:
     def getVerboseColor(self):
         return ['Spades', 'Clubs', 'Hearts', 'Diamonds'][self.color]
 
-
+    # returns the emoji for the card's color
+    def getEmojiColor(self):
+        return [':spades:', ':clubs:', ':hearts:', ':diamonds:'][self.color]
 
     # returns the verbose value of a card
     def getVerboseValue(self):
@@ -189,6 +193,12 @@ class Card:
     #   5 of Clubs
     def getFullVerbose(self):
         return "**%s** of **%s**" % (self.getVerboseValue(), self.getVerboseColor())
+
+
+
+    # returns a string in the form of "<coloremoji>Value"
+    def getFullEmojiVerbose(self):
+        return "%s**%s**" % (self.getEmojiColor(), self.getVerboseValue())
 
 
 
