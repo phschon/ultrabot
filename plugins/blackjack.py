@@ -203,6 +203,11 @@ class BlackJack(metamodule.Meta):
 
     # calculates the maximal score that is at most 21 or the minimal score above 21 if there is no score
     # below or equal to 21
+    #
+    # @param card_list - the list of cards to compute the score for
+    # @param limit     - the limit which should not be surpassed. Use to decide the value of the aces (1 or 11)
+    #
+    # @return the score
     def _calculateScore(self, card_list, limit):
         # points from non ace cards
         points_of_other_cards = sum([card.getGameValue() for card in card_list if not card.getVerboseValue() == 'Ace'])
@@ -225,6 +230,12 @@ class BlackJack(metamodule.Meta):
             return min(infeasible_scores)
 
 
+    # List of dealer cards as a string with emojis
+    # On the deal the second card is hidden
+    #
+    # @param hidden - whether the second card should be hidden (default) or not
+    #
+    # @return the string
     def _dealerCardsString(self, hidden=True):
         # when the dealer has more than 2 cards show them all
         if len(self.dealer_cards) > 2 or not hidden:
@@ -232,7 +243,9 @@ class BlackJack(metamodule.Meta):
         else:
             return "%s  :black_medium_square:" % self.dealer_cards[0].getFullEmojiVerbose()
 
-
+    # List of player cards as a string with emojis
+    #
+    # @return the string
     def _playerCardsString(self):
         return "  ".join([card.getFullEmojiVerbose() for card in  self.player_cards])
 
