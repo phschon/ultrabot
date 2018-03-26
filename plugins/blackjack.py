@@ -69,6 +69,7 @@ class BlackJack(metamodule.Meta):
             # game not running
             else:
                 await self.client.send_message(message.channel, "You have to start a game first. Use `!%s new` for that" % self.get_command())
+
         # start a new game
         elif command[0] == 'new':
             self.game = True
@@ -123,7 +124,13 @@ class BlackJack(metamodule.Meta):
         # show the rules
         elif command[0] == 'rules':
             rules = textwrap.dedent("""
-            Black Jack is a pretty simple game, you ask me to deal you a card and then you decide, whether you want a new one or not. Your goal is to stay below 21 bot to get as close as possible.
+            Black Jack is a pretty simple game, on the **deal** we both draw two cards (my second one is *hidden* however). Your goal is to stay below **21** but as close as possible.
+
+            You can either **hit** (`!%s hit`) to get a new card or **stand** (`!%s stand`) if you don't want to draw a new card.
+
+            After that I will draw my cards until I reach at least **17** points. Whoever has the highest score wins.
+
+            If you hit a **10** and an **Ace** on the deal that's a **Black Jack** and you win immediately.
 
             Card Values:
             **Numbers**: Their **number**
@@ -132,9 +139,7 @@ class BlackJack(metamodule.Meta):
 
             The **ace** value is automatically chosen to best fit the situation
 
-            If you don't want any new card just tell me to `stop` and you take that score
-
-            Have fun playing!""")
+            Have fun playing!""" % tuple([self.get_command()]*2))
             await self.client.send_message(message.channel, rules)
         # wrong argument
         else:
