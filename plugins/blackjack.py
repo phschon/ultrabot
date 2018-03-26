@@ -18,6 +18,8 @@ class BlackJack(metamodule.Meta):
         self.deck = Deck()
         # cards drawn by player
         self.player_cards = []
+        # cards drawn by the dealer
+        self.dealer_cards = []
 
         # reset the game
         self._resetGame()
@@ -46,29 +48,66 @@ class BlackJack(metamodule.Meta):
     # functionality
     async def execute(self, command, message):
         # draw a new card
-        if command[0] == 'card':
-            self._drawCard()
-            card_list_string = "  ".join([card.getFullEmojiVerbose() for card in  self.player_cards])
-            card_list_string += "\n\nYour current score is: **%d**" % self._calculateScore()
-            await self.client.send_message(message.channel, card_list_string)
-            # check for blackjack
-            if(self._checkBlackJack()):
-                await self.client.send_message(message.channel, "You hit a **Black Jack**, nice!, Lets play another round!")
-                self._resetGame()
+        if command[0] == 'hit':
+            self._drawPlayerCard()
+            response_message = self._playerCardsString()
+            response_message += "\n\nYour current score is: **%d**\n" % self._calculateScore(self.player_cards, 21)
             # reset the game if the cards surpass 21 in value
             if(self._checkSurpassed21()):
-                await self.client.send_message(message.channel, "Too bad, you lost! Let's play another round!")
+                response_message += "Too bad, you busted! Let's play another round!"
+                await self.client.send_message(message.channel, response_message)
                 self._resetGame()
-        # reset the game
+            # continue otherwise
+            else:
+                response_message += "You wanna **hit** or **stand**?"
+                await self.client.send_message(message.channel, response_message)
+
+        # start a new game
         elif command[0] == 'new':
             self._resetGame()
-            await self.client.send_message(message.channel, "Sure thing, let's play a new game")
+            response_message = "Sure thing, let's play a new game, here's the deal\n\n"
+            # draw initial deal
+            self._drawPlayerCard()
+            self._drawDealerCard()
+            self._drawPlayerCard()
+            self._drawDealerCard()
+            # show dealer cards
+            response_message += "My cards: %s\n\n" % self._dealerCardsString()
+            response_message += "Your cards: %s\n\n" % self._playerCardsString()
+            # check for a Black Jack
+            if(self._checkBlackJack()):
+                response_message += "You hit a **Black Jack**, you won!, Let's play another round!"
+                await self.client.send_message(message.channel, response_message)
+            # continue the game if the player did not hit a Black Jack
+            else:
+                response_message += "Your current score is: **%d**\n" % self._calculateScore(self.player_cards, 21)
+                response_message += "You wanna **hit** or **stand**?"
+                await self.client.send_message(message.channel, response_message)
+
         # player stops the game and gets the score
-        elif command[0] == 'stop':
-            score = self._calculateScore()
-            await self.client.send_message(message.channel, "Sure, your score is **%d**. Let's play another round!" % score)
+        elif command[0] == 'stand':
+            player_score = self._calculateScore(self.player_cards, 21)
+            response_message = "Sure, your score is **%d**. I'll draw my cards!\n\n" % player_score
+            # dealer has to draw cards until he has at least 17 points
+            while self._calculateScore(self.dealer_cards, 17) < 17:
+                self._drawDealerCard()
+            # check if the dealer has overpaid or not
+            if self._calculateScore(self.dealer_cards, 21) > 21:
+                response_message += "Oh, damn it I busted. Your win!"
+            # dealer has not overpaid
+            else:
+                response_message += "My cards: %s\n\n" % self._dealerCardsString(hidden=False)
+                dealer_score = self._calculateScore(self.dealer_cards, 21)
+                response_message += "Score: **%s**\n" % dealer_score
+                if(dealer_score > player_score):
+                    response_message += "Looks like I've won"
+                else:
+                    response_message += "Look's like you've won"
+
+            await self.client.send_message(message.channel, response_message)
             # reset the game
             self._resetGame()
+
         # show the rules
         elif command[0] == 'rules':
             rules = textwrap.dedent("""
@@ -98,15 +137,25 @@ class BlackJack(metamodule.Meta):
         self.deck.reset()
         # empty player cards
         self.player_cards = []
+        # empty dealer cards
+        self.dealer_cards = []
 
 
 
     # draws a card from the deck and adds it to the player_cards list
     #
     # @return the card
-    def _drawCard(self):
+    def _drawPlayerCard(self):
         card = self.deck.draw()
         self.player_cards.append(card)
+        return card
+
+    # draws a card from the deck and adds it to the dealer_cards list
+    #
+    # @return the card
+    def _drawDealerCard(self):
+        card = self.deck.draw()
+        self.dealer_cards.append(card)
         return card
 
 
@@ -135,21 +184,21 @@ class BlackJack(metamodule.Meta):
 
     # calculates the maximal score that is at most 21 or the minimal score above 21 if there is no score
     # below or equal to 21
-    def _calculateScore(self):
+    def _calculateScore(self, card_list, limit):
         # points from non ace cards
-        points_of_other_cards = sum([card.getGameValue() for card in self.player_cards if not card.getVerboseValue() == 'Ace'])
+        points_of_other_cards = sum([card.getGameValue() for card in card_list if not card.getVerboseValue() == 'Ace'])
         # list of aces
-        number_of_aces = len([card for card in self.player_cards if card.getVerboseValue() == 'Ace'])
+        number_of_aces = len([card for card in card_list if card.getVerboseValue() == 'Ace'])
         # permuations of aces set to on (11) and off (1)
         ace_perm = list(itertools.product([0,1], repeat=number_of_aces))
         # list of possibles scores
         scores = [sum([11 if flag else 1 for flag in perm])+points_of_other_cards for perm in ace_perm]
-        print([card.getVerboseValue() for card in self.player_cards])
+        print([card.getVerboseValue() for card in card_list])
         print(scores)
         # feasible score list
-        feasible_scores = [score for score in scores if score <= 21]
+        feasible_scores = [score for score in scores if score <= limit]
         # infeasible scores
-        infeasible_scores = [score for score in scores if score>21]
+        infeasible_scores = [score for score in scores if score>limit]
         # return the maximum feasible score if possible, the minimal infeasible else
         if(len(feasible_scores) > 0):
             return max(feasible_scores)
@@ -157,8 +206,16 @@ class BlackJack(metamodule.Meta):
             return min(infeasible_scores)
 
 
+    def _dealerCardsString(self, hidden=True):
+        # when the dealer has more than 2 cards show them all
+        if len(self.dealer_cards) > 2 or not hidden:
+            return "  ".join([card.getFullEmojiVerbose() for card in  self.dealer_cards])
+        else:
+            return "%s  :black_medium_square:" % self.dealer_cards[0].getFullEmojiVerbose()
 
 
+    def _playerCardsString(self):
+        return "  ".join([card.getFullEmojiVerbose() for card in  self.player_cards])
 
 # deck of cards
 class Deck:
