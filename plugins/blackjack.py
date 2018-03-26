@@ -21,6 +21,9 @@ class BlackJack(metamodule.Meta):
         # cards drawn by the dealer
         self.dealer_cards = []
 
+        # flag if a game is running
+        self.game = False
+
         # reset the game
         self._resetGame()
 
@@ -34,10 +37,10 @@ class BlackJack(metamodule.Meta):
     # help message
     async def help(self, message):
         helpstr = """ Play Backjack!
-                - `!%s card`: Draw a new card
-                - `!%s new`: Reset the game
+                - `!%s hit`: Draw a new card
+                - `!%s new`: Start a new game
                 - `!%s rules`: Show rules
-                - `!%s stop`: Stop drawing new cards and take the score
+                - `!%s stand`: Stop drawing new cards and take the score
         """ % tuple([self.get_command()]*4)
         await self.client.send_message(message.channel, helpstr)
 
@@ -49,22 +52,26 @@ class BlackJack(metamodule.Meta):
     async def execute(self, command, message):
         # draw a new card
         if command[0] == 'hit':
-            self._drawPlayerCard()
-            response_message = self._playerCardsString()
-            response_message += "\n\nYour current score is: **%d**\n" % self._calculateScore(self.player_cards, 21)
-            # reset the game if the cards surpass 21 in value
-            if(self._checkSurpassed21()):
-                response_message += "Too bad, you busted! Let's play another round!"
-                await self.client.send_message(message.channel, response_message)
-                self._resetGame()
-            # continue otherwise
+            # game running
+            if self.game:
+                self._drawPlayerCard()
+                response_message = self._playerCardsString()
+                response_message += "\n\nYour current score is: **%d**\n" % self._calculateScore(self.player_cards, 21)
+                # reset the game if the cards surpass 21 in value
+                if(self._checkSurpassed21()):
+                    response_message += "Too bad, you busted! Let's play another round!"
+                    await self.client.send_message(message.channel, response_message)
+                    self._resetGame()
+                # continue otherwise
+                else:
+                    response_message += "You wanna **hit** or **stand**?"
+                    await self.client.send_message(message.channel, response_message)
+            # game not running
             else:
-                response_message += "You wanna **hit** or **stand**?"
-                await self.client.send_message(message.channel, response_message)
-
+                await self.client.send_message(message.channel, "You have to start a game first. Use `!%s new` for that" % self.get_command())
         # start a new game
         elif command[0] == 'new':
-            self._resetGame()
+            self.game = True
             response_message = "Sure thing, let's play a new game, here's the deal\n\n"
             # draw initial deal
             self._drawPlayerCard()
@@ -86,27 +93,32 @@ class BlackJack(metamodule.Meta):
 
         # player stops the game and gets the score
         elif command[0] == 'stand':
-            player_score = self._calculateScore(self.player_cards, 21)
-            response_message = "Sure, your score is **%d**. I'll draw my cards!\n\n" % player_score
-            # dealer has to draw cards until he has at least 17 points
-            while self._calculateScore(self.dealer_cards, 17) < 17:
-                self._drawDealerCard()
-            # check if the dealer has overpaid or not
-            if self._calculateScore(self.dealer_cards, 21) > 21:
-                response_message += "Oh, damn it I busted. Your win!"
-            # dealer has not overpaid
-            else:
-                response_message += "My cards: %s\n\n" % self._dealerCardsString(hidden=False)
-                dealer_score = self._calculateScore(self.dealer_cards, 21)
-                response_message += "Score: **%s**\n" % dealer_score
-                if(dealer_score > player_score):
-                    response_message += "Looks like I've won"
+            # game running
+            if self.game:
+                player_score = self._calculateScore(self.player_cards, 21)
+                response_message = "Sure, your score is **%d**. I'll draw my cards!\n\n" % player_score
+                # dealer has to draw cards until he has at least 17 points
+                while self._calculateScore(self.dealer_cards, 17) < 17:
+                    self._drawDealerCard()
+                # check if the dealer has overpaid or not
+                if self._calculateScore(self.dealer_cards, 21) > 21:
+                    response_message += "Oh, damn it I busted. Your win!"
+                # dealer has not overpaid
                 else:
-                    response_message += "Look's like you've won"
+                    response_message += "My cards: %s\n\n" % self._dealerCardsString(hidden=False)
+                    dealer_score = self._calculateScore(self.dealer_cards, 21)
+                    response_message += "Score: **%s**\n" % dealer_score
+                    if(dealer_score > player_score):
+                        response_message += "Looks like I've won"
+                    else:
+                        response_message += "Look's like you've won"
 
-            await self.client.send_message(message.channel, response_message)
-            # reset the game
-            self._resetGame()
+                await self.client.send_message(message.channel, response_message)
+                # reset the game
+                self._resetGame()
+            # game not running
+            else:
+                await self.client.send_message(message.channel, "You have to start a game first. Use `!%s new` for that" % self.get_command())
 
         # show the rules
         elif command[0] == 'rules':
@@ -139,6 +151,8 @@ class BlackJack(metamodule.Meta):
         self.player_cards = []
         # empty dealer cards
         self.dealer_cards = []
+        # game state
+        self.game = False
 
 
 
