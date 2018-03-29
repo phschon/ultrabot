@@ -17,6 +17,7 @@ At the moment the following functionalities are avaibalbe:
 * `jisho`: Japanese online dictionary [jisho.org](http://jisho.org) 
 * `test`: debug and testing purpose only, showing debug output on console. Also works with multiple channels on multiple servers.
 
+
 ## TODO
 
 * post pictures from specific sources in regular intervals
@@ -48,6 +49,17 @@ You can install the dependencies with pip using
 pip install -r requirements.txt
 ```
 
+
 ## Known Bugs
 
 * `music.py`: The class is not threadsafe. Combinations of parallel commands or function calls may trigger unintended/deprecated behaviour or even crash the bot. A potential fix is coming soon.
+
+
+## Contributors
+
+Special thanks to
+
+* 00SteinsGate00
+* Boreeas
+
+for constant plugin updates and code optimizations.

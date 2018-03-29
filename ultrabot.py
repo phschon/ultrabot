@@ -49,7 +49,7 @@ class UltraClient(discord.Client):
 
     def get_help_msg(self) -> str:
         commands = ", ".join([f"`!{task}`" for task in self.tasks.keys()])
-        return f"""Available commands: `!list`, {commands}
+        return f"""Available commands: `!list`, `!aboutme`, {commands}
 
         Use `!help <command>` for information about commands.
         """
@@ -71,6 +71,10 @@ class UltraClient(discord.Client):
         # if command is 'list', print avaibalbe commands
         if command[0] == 'list':
             await self.send_message(message.channel, self.get_help_msg())
+            return
+
+        if command[0] == 'aboutme':
+            await self.send_message(message.channel, 'I am the UltraBot! You can download and support me here: https://github.com/phschon/ultrabot.')
             return
 
         if command[0] == 'help' and not len(command) == 2:
