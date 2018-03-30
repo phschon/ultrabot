@@ -59,8 +59,10 @@ class Howlongtobeat(metamodule.Meta):
                     game_message = self._formatGameMessage(game_info) + "\n"
                     # send the message back to the channel
                     response_message += game_message
-                # send the message
-                await self.client.send_message(message.channel, response_message)
+                # discord doesn't like messages longer than 2000 so we need to chunk them
+                for chunked_message in self._chunkMessage(response_message):
+                    # send the message
+                    await self.client.send_message(message.channel, chunked_message)
             # Not a 200 response code
             else:
                 await self.client.send_message(message.channel, "Can't reach HowLongToBeat.com")
@@ -68,6 +70,7 @@ class Howlongtobeat(metamodule.Meta):
         else:
             await self.client.send_message(message.channel, "No game title provided")
             await self.help(message)
+
 
 
     # parses the html for a certain game and returns the information
@@ -95,6 +98,8 @@ class Howlongtobeat(metamodule.Meta):
                 }
             for i in range(0, len(titles))]
         }
+
+
 
     # takes a game object and formats the message string for the chat
     #
@@ -132,6 +137,7 @@ class Howlongtobeat(metamodule.Meta):
         return game_message
 
 
+
     # formats the info message string to show how many games where found
     #
     # @param number_of_results - number of games found
@@ -144,3 +150,23 @@ class Howlongtobeat(metamodule.Meta):
         else:
             plural = "games" if number_of_results > 1 else "game"
             return 'I found **%d** %s for **%s**:' % (number_of_results, plural, search_string)
+
+
+
+    # discord does not like messages longer than 2000 characters. This method chunks
+    # a message that is longer into small enough parts, cut between game messages
+    #
+    # @param message - the message that might need to be chunked
+    #
+    # @return list of chunked message strings, each 2000 characters or shorter
+    def _chunkMessage(self, message):
+        # chunk the message if it's longer than 2000 characters
+        if len(message) > 2000:
+            # find the right spot to cut to prevent cutting within game messages
+            cut_index = message[:2000].rfind("**\n```")
+            cut_index = message[:cut_index].rfind("**")
+            # recursively cut the rest and return it as a list of messages
+            return [message[:cut_index]] + self._chunkMessage(message[cut_index:])
+        # doesn't need to be chunked
+        else:
+            return [message]
