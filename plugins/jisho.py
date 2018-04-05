@@ -13,7 +13,7 @@ class Jisho(metamodule.Meta):
 
     # help message
     async def help(self, message):
-        helpstr = """ Gets comics from **xkcd.com**
+        helpstr = """ Look up japanese vocab and expressions from **jisho.org**
                 - `!%s <word>`: Looks up that word on jisho.org
         """ % self.get_command()
         await self.client.send_message(message.channel, helpstr)
