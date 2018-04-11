@@ -12,6 +12,8 @@ class Template(metamodule.Meta):
         self.client = client
         # the key word used in a discord message to address this module, e.g. "!samplecommand do_somehting"
         self.command = 'samplecommand'
+        # register the on_message method of this class to be called when a message is sent
+        client.register_on_message(self.on_message)
         # This string is displayed when either !help is called or a wrong usage of parameters is detected
         self.helpstr = '''Supported Commands:
             
@@ -38,6 +40,13 @@ class Template(metamodule.Meta):
             pass
         else:
             await self.client.send_message(message.channel, 'Wrong usage of template.\n{}'.format(self.helpstr))
+
+
+    # since this method was registered in the constructor, this method is called each time a message is sent
+    async def on_message(self, message):
+        # do something here if a message was sent
+        # note that the parameters of this function must match the parameters of the on_message method in ultrabot.py
+        pass
 
 
     async def help(self, message):
