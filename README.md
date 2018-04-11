@@ -37,7 +37,7 @@ Feel free to open issues for suggestions or contribute your own plugin :)
 
 ## Event Handler
 
-There is an optional event handler that notifys a plugin when a certain event occurs. Currently on\_ready, on\_message, on\_message\_edit, on\_reaction\_edit and on\_reaction\_removed are supported. A plugin can call the `register` or `unregister` function for each event in `ultrabot.py` with a given function as parameter to add or remove this function to or from the event. If an event occurs, all functions registered for this event are called simultaneously. See the `on_message` function in `template.py` for an example.
+There is an optional event handler that notifys a plugin when a certain event occurs. Currently on\_ready, on\_message, on\_message\_edit, on\_reaction\_edit and on\_reaction\_removed are supported. A plugin can call the `register_*()` or `unregister_*()` function for each event in `ultrabot.py` with a given function as parameter to add or remove this function to or from the event. If an event occurs, all functions registered for this event are called simultaneously. See the `on_message()` function in `template.py` for an example.
 
 
 ## Dependencies
