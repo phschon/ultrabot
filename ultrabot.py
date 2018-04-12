@@ -44,6 +44,9 @@ class UltraClient(discord.Client):
                 p = importlib.import_module(mod, package="plugins")
         for c in metamodule.Meta.__subclasses__():
             instance = c(self)
+            # skip all classes where command is None, since not callable
+            if instance.get_command() == None:
+                continue
             print(f"Module loaded: {instance.get_command()}")
             self.tasks[instance.get_command()] = instance
 
