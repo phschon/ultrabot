@@ -31,7 +31,7 @@ Feel free to open issues for suggestions or contribute your own plugin :)
 ## Notes
 
 * `metamodule.py` is the base class which all plugins must inherit. It specifies methods that are needed by the bot and must be implemented.
-* `template.py` shows sample code for creating new functionalities. Adapt line 10, 14, 16-19, 44 and the execute function for the individual purpose
+* `template.py` shows sample code for creating new functionalities. Adapt line 10, 14-21, 53 and the execute function for the individual purpose
 * In order to deploy the bot, you will need to register it using your discord account. More infos: https://discordapp.com/developers/docs/topics/oauth2. The token needed for the bot is stored in a file named `token` in its the root directory.
 
 
