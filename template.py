@@ -9,7 +9,7 @@ import metamodule
 
 class Template(metamodule.Meta):
     def __init__(self, client):
-        self.client = client
+        super()
         # the key word used in a discord message to address this module, e.g. "!samplecommand do_somehting"
         self.command = 'samplecommand'
         # register the on_message method of this class to be called when a message is sent

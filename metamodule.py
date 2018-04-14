@@ -7,6 +7,7 @@ from abc import ABCMeta, abstractmethod
 class Meta(metaclass=ABCMeta):
     def __init__(self, client):
         self.client = client
+        self.command = None
 
     @abstractmethod
     def get_command(self):
